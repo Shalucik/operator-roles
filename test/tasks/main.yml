@@ -1,0 +1,5 @@
+---
+# tasks file for Atom
+
+- debug:
+    msg: hallo
