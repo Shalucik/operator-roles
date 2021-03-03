@@ -1,7 +1,7 @@
 ---
 galaxy_info:
-  author: Wouter Remijn
-  description: Role to generator kubernetes yaml for an ogc atom service
+  author: PDOK
+  description: Role to apply and remove kubernetes objects to a cluster
   company: PDOK
 
   license: license (MIT)
@@ -13,9 +13,9 @@ galaxy_info:
     versions:
     - 1.18
 
-  galaxy_tags:
-  - atom
+  galaxy_tags: []
 
 dependencies: []
 
-collections: []
+collections:
+- community.kubernetes

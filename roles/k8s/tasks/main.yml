@@ -1,0 +1,40 @@
+---
+- name: Split present and absent objects
+  set_fact:
+    present_objects: "{{ (objects | selectattr('state', 'undefined') | list +
+                        objects | selectattr('state', 'defined') | selectattr('state', 'equalto', 'present') | list) |
+                        map(attribute='object')| list }}"
+    absent_objects: "{{ objects | selectattr('state', 'defined') | selectattr('state', 'equalto', 'absent') | list |
+                        map(attribute='object')| list }}"
+
+- name: Log objects to apply
+  debug:
+    msg: "Applying {{ item.metadata.name }}"
+  loop: "{{ present_objects }}"
+  loop_control:
+    label: "{{ item.metadata.name }}"
+
+- name: Apply objects
+  k8s:
+    apply: true
+    resource_definition: "{{ present_objects }}"
+    validate:
+      fail_on_error: true
+      strict: true
+  when: present_objects | length > 0
+
+- name: Log objects to remove
+  debug:
+    msg: "Removing {{ item.metadata.name }}"
+  loop: "{{ absent_objects }}"
+  loop_control:
+    label: "{{ item.metadata.name }}"
+
+- name: Remove objects
+  k8s:
+    state: absent
+    resource_definition: "{{ absent_objects }}"
+    validate:
+      fail_on_error: true
+      strict: true
+  when: absent_objects | length > 0
